@@ -36,6 +36,7 @@ public class NodeEntryVisitorTest {
             executor, mock(DirtyTrackingProgressReceiver.class), mock(RunnableMaker.class));
     SkyKey nonCPUHeavyKey = mock(SkyKey.class);
 
+
     nodeEntryVisitor.enqueueEvaluation(nonCPUHeavyKey, Integer.MAX_VALUE);
 
     verify(executor).execute(any(), eq(ThreadPoolType.REGULAR));

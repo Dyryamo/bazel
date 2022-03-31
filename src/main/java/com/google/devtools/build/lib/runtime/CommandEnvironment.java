@@ -73,6 +73,10 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 
 /**
+ *
+ *
+ * 封装单个命令所需的状态。 当前命令完成后，环境将被删除，并且所有相应的对象都被垃圾回收。
+ * <p>这个类不是用于模拟目的的最终类。 不要在生产代码中扩展它。
  * Encapsulates the state needed for a single command. The environment is dropped when the current
  * command is done and all corresponding objects are garbage collected.
  *

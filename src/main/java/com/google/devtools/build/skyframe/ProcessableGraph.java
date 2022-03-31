@@ -22,6 +22,10 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
+ *
+ *
+ * graph的单个版本和评估器之间的接口。 支持该graph的单个版本的突变。
+ * <p>尝试检索节点条目时，某些图形实现可能会抛出 {@link InterruptedException}。 这样的异常不应该在本地捕获——应该允许它们向上传播。 <p>这个类不是为了直接使用而设计的，并且只公开为用于在这个包之外的评估实现中使用。
  * Interface between a single version of the graph and the evaluator. Supports mutation of that
  * single version of the graph.
  *

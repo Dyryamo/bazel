@@ -30,6 +30,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ *
+ * {@link ParallelEvaluator} 的线程池管理器。 包装一个 {@link QuiescingExecutor} 并跟踪待处理的节点。
  * Threadpool manager for {@link ParallelEvaluator}. Wraps a {@link QuiescingExecutor} and keeps
  * track of pending nodes.
  */
@@ -57,6 +59,8 @@ class NodeEntryVisitor {
   private final Set<RuntimeException> crashes = Sets.newConcurrentHashSet();
   private final DirtyTrackingProgressReceiver progressReceiver;
   /**
+   *
+   * 当给定 {@link SkyKey} 进行评估时，允许此visitor执行合适{@link Runnable}的Function 。
    * Function that allows this visitor to execute the appropriate {@link Runnable} when given a
    * {@link SkyKey} to evaluate.
    */
@@ -76,6 +80,14 @@ class NodeEntryVisitor {
   }
 
   /**
+   * 入队评估
+   * 如果此访问者正在使用优先级队列，则将 {@code key} 排入队列以进行评估，在 {@code evaluationPriority}。
+   * <p>{@code evaluationPriority} 用于最小化评估“蔓延”：效率低下来自不完全评估许多节点，而不是专注于完成已经开始评估的节点的评估。
+   * 蔓延可能会很昂贵，因为未完全评估的节点将状态保存在 Skyframe 中，并且通常在使用内存的外部缓存中。
+   * <p>一般来说，当重启一个已经开始评估的节点时，{@code evaluationPriority} 应该更高，而当一个没有其他任务依赖的节点入队时，
+   * {@code evaluationPriority} 应该更高。
+   * 将 {@code evaluationPriority} 设置为父级的所有子级的相同值在实验上具有良好的结果，因为它优先考虑可以一起使用的批量工作。
+   * 同样，优先考虑更深的节点（评估图的深度优先搜索）在实验上也有很好的结果，因为它可以最大限度地减少蔓延。
    * Enqueue {@code key} for evaluation, at {@code evaluationPriority} if this visitor is using a
    * priority queue.
    *

@@ -30,6 +30,8 @@ public interface InMemoryGraph extends ProcessableGraph {
   }
 
   /**
+   *
+   * 创建一个新的内存中图，该图丢弃图边以节省内存，并且不能用于增量构建。
    * Creates a new in-memory graph that discards graph edges to save memory and cannot be used for
    * incremental builds.
    */

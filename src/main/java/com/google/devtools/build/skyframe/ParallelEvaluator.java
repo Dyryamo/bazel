@@ -146,6 +146,7 @@ public class ParallelEvaluator extends AbstractParallelEvaluator {
         // in order to be thread-safe.
         switch (entry.addReverseDepAndCheckIfDone(null)) {
           case NEEDS_SCHEDULING:
+            // 低优先级，因为任何其他当前正在评估的节点都不需要此节点。 因此，只要还有其他有用的工作要做，就将它放在队列的后面。
             // Low priority because this node is not needed by any other currently evaluating node.
             // So keep it at the back of the queue as long as there's other useful work to be done.
             evaluatorContext.getVisitor().enqueueEvaluation(skyKey, Integer.MIN_VALUE);
@@ -160,6 +161,8 @@ public class ParallelEvaluator extends AbstractParallelEvaluator {
         }
       }
     } catch (InterruptedException ie) {
+      // 在评估多个键时，一个键可能会在从另一个键上的 #addReverseDepAndCheckIfDone 或 #informProgressReceiverThatValueIsDone
+      // 引发 InterruptedException 之前排队。 因此，如果主线程（当前线程）被中断，我们必须确保所有评估线程都正确中断并关闭。
       // When multiple keys are being evaluated, it's possible that a key may get queued before
       // an InterruptedException is thrown from either #addReverseDepAndCheckIfDone or
       // #informProgressReceiverThatValueIsDone on a different key. Therefore we have to make sure
@@ -630,6 +633,9 @@ public class ParallelEvaluator extends AbstractParallelEvaluator {
       throws InterruptedException {
     ImmutableSet<SkyKey> skyKeySet = ImmutableSet.copyOf(skyKeys);
 
+
+    //优化：如果缓存中已经存在所有需要的节点值，则直接返回它们，而无需启动重型机器、产生线程等。
+    // 通知progressReceiver这些节点已完成以与主代码路径保持一致。
     // Optimization: if all required node values are already present in the cache, return them
     // directly without launching the heavy machinery, spawning threads, etc.
     // Inform progressReceiver that these nodes are done to be consistent with the main code path.

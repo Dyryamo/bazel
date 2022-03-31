@@ -36,6 +36,8 @@ import java.util.Objects;
 import javax.annotation.Nullable;
 
 /**
+ *
+ * 引用一组计算的已解析目标的值。 这用于目标模式解析的结果。
  * A value referring to a computed set of resolved targets. This is used for the results of target
  * pattern parsing.
  */
@@ -66,11 +68,14 @@ public final class TargetPatternPhaseValue implements SkyValue {
     this.notSymlinkedInExecrootDirectories = notSymlinkedInExecrootDirectories;
   }
 
-  /** Expensive. Results in a Skyframe evaluation. */
+  /**
+   * 昂贵的。 在 Skyframe 评估中产生结果。
+   * Expensive. Results in a Skyframe evaluation. */
   private static ImmutableSet<Target> getTargetsFromLabels(
       Collection<Label> labels, ExtendedEventHandler eventHandler, PackageManager packageManager)
       throws InterruptedException {
     ImmutableSet.Builder<Target> result = ImmutableSet.builderWithExpectedSize(labels.size());
+
     for (Label label : labels) {
       try {
         result.add(

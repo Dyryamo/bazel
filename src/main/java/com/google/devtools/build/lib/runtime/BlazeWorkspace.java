@@ -43,6 +43,10 @@ import java.util.function.Consumer;
 import javax.annotation.Nullable;
 
 /**
+ *
+ *
+ * 此类表示一个工作区，并包含与其相关的操作和数据。
+ * 相比之下，BlazeRuntime 类代表 Blaze 服务器，并包含（假定）独立于工作区或当前命令的操作和数据。
  * This class represents a workspace, and contains operations and data related to it. In contrast,
  * the BlazeRuntime class represents the Blaze server, and contains operations and data that are
  * (supposed to be) independent of the workspace or the current command.

@@ -233,6 +233,10 @@ import javax.annotation.Nullable;
 import net.starlark.java.eval.StarlarkSemantics;
 
 /**
+ *
+ *
+ * 支持 Skyframe 驱动执行的辅助对象。
+ * <p>该对象主要用于将外部状态，例如执行器引擎或一些额外的工件（工作空间状态和构建信息工件）注入 SkyFunctions 以在构建期间使用。
  * A helper object to support Skyframe-driven execution.
  *
  * <p>This object is mostly used to inject external state, such as the executor engine or some
@@ -2856,6 +2860,7 @@ public abstract class SkyframeExecutor implements WalkableGraphFactory, Configur
   }
 
   /**
+   * 在应用通过参数和选项配置的过滤器后加载给定的目标模式（例如，如果设置了 {@code --build_tests_only}，则删除非测试目标）。
    * Loads the given target patterns after applying filters configured through parameters and
    * options (such as removing non-test targets if {@code --build_tests_only} is set).
    *

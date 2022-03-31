@@ -25,6 +25,12 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
+ *
+ * Skyframe {@link ParallelEvaluator#eval} 调用的结果。
+ * 将包含所有成功评估的值，可通过 {@link #get} 检索。
+ * 同样，第一个评估失败的值（在非持续情况下）的 {@link ErrorInfo} 或任何剩余的未能评估的值（在持续情况下）将是可检索的。
+ * <p>一个节点永远不会被成功评估和失败评估。 因此，如果 {@link #get} 为某个键返回非空值，则该键没有存储错误，反之亦然。
+ * @param <T> 调用者请求的值的类型。
  * The result of a Skyframe {@link ParallelEvaluator#eval} call. Will contain all the successfully
  * evaluated values, retrievable through {@link #get}. As well, the {@link ErrorInfo} for the first
  * value that failed to evaluate (in the non-keep-going case), or any remaining values that failed

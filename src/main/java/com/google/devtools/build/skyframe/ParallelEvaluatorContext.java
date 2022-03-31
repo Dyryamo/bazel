@@ -29,6 +29,9 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
+ *
+ * 上下文对象为 {@link SkyFunctionEnvironment} 提供足够的信息来履行其职责。
+ * 在所有 {@link SkyFunctionEnvironment} 实例之间共享，应将此对象视为数据的只读集合。
  * Context object holding sufficient information for {@link SkyFunctionEnvironment} to perform its
  * duties. Shared among all {@link SkyFunctionEnvironment} instances, which should regard this
  * object as a read-only collection of data.
@@ -60,6 +63,9 @@ class ParallelEvaluatorContext {
   private final Supplier<NodeEntryVisitor> visitorSupplier;
 
   /**
+   * 返回一个给定一个 {@code key} 来评估的{@link Runnable}和一个 {@code evaluationPriority} 指示是否应该尽快安排评估（越高越好）。
+   * 返回的 {@link Runnable} 是一个 {@link ComparableRunnable} ，因此如果需要，它可以由 {@code evaluationPriority} 在优先级队列中排序。
+   *
    * Returns a {@link Runnable} given a {@code key} to evaluate and an {@code evaluationPriority}
    * indicating whether it should be scheduled for evaluation soon (higher is better). The returned
    * {@link Runnable} is a {@link ComparableRunnable} so that it can be ordered by {@code

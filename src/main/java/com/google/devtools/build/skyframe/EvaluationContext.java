@@ -24,6 +24,9 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 /**
+ *
+ *包括 {@link MemoizingEvaluator#evaluate}、{@link MemoizingEvaluator#evaluate} 和 {@link WalkableGraphFactory#prepareAndGet} 使用的选项和状态
+ *
  * Includes options and states used by {@link MemoizingEvaluator#evaluate}, {@link
  * MemoizingEvaluator#evaluate} and {@link WalkableGraphFactory#prepareAndGet}
  */
@@ -36,8 +39,6 @@ public class EvaluationContext {
   private final boolean isExecutionPhase;
   private final int cpuHeavySkyKeysThreadPoolSize;
   private final int executionPhaseThreadPoolSize;
-  private final UnnecessaryTemporaryStateDropperReceiver unnecessaryTemporaryStateDropperReceiver;
-
   protected EvaluationContext(
       int numThreads,
       @Nullable Supplier<ExecutorService> executorServiceSupplier,
@@ -59,6 +60,8 @@ public class EvaluationContext {
     this.executionPhaseThreadPoolSize = executionPhaseThreadPoolSize;
     this.unnecessaryTemporaryStateDropperReceiver = unnecessaryTemporaryStateDropperReceiver;
   }
+
+  private final UnnecessaryTemporaryStateDropperReceiver unnecessaryTemporaryStateDropperReceiver;
 
   public int getParallelism() {
     return numThreads;

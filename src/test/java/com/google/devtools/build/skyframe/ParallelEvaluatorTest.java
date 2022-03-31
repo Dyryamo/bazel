@@ -299,6 +299,11 @@ public class ParallelEvaluatorTest {
                   }
                 })
             .transform(new InMemoryGraphImpl());
+    System.out.println("tester.getskyFunctionmap");
+    for (java.util.Map.Entry<SkyFunctionName, SkyFunction> entry:tester.getSkyFunctionMap().entrySet()){
+      System.out.println(entry.getKey().getName());
+      System.out.println("->?"+entry.getValue());
+    }
     EvaluationResult<StringValue> result = eval(/*keepGoing=*/ false, ImmutableList.of(parentKey));
     assertThat(result.hasError()).isFalse();
     assertThat(result.get(parentKey)).isEqualTo(new StringValue("All done!"));

@@ -64,7 +64,25 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 /**
+ *
+ * 定义多线程 Skyframe 评估中使用的评估Action，并构造Action所依赖的 {@link ParallelEvaluatorContext}。
+ * <p>使用参数 ({@code SkyKey}s)
+ * 评估一组给定函数 ({@code SkyFunction}s)。
+ * 循环依赖是不允许的，并且在遍历过程中会被检测到。
+ * <p>这个类实现了多线程评估。这是一个相当复杂的过程，在 {@link ProcessableGraph}、{@link NodeEntry} 类型的图中的节点、工作队列和运行中的节点集之间有很强的一致性要求。
+ * <p>基本不变量是： <p>
+ *   节点可以处于以下三种状态之一：就绪、等待和完成。当且仅当它的所有依赖关系都已发出信号时，节点才准备就绪。
+ * 如果一个节点有一个值，它就完成了。如果不是所有依赖项都已发出信号，则它正在等待。
+ * <p>当且仅当节点准备好时，它必须在工作队列中。一个节点同时在工作队列中两次是错误的。
+ * <p>如果节点已创建但尚未完成，则认为它正在运行。在中断的情况下，工作队列被丢弃，并且正在运行的集合用于删除部分计算的值。
+ * <p>图的每次评估都在一个“版本”上进行，该版本号目前由非负 {@code long} 给出。该版本也可以被认为是“mtime”。图中的每个节点都有一个版本，这是其值更改的最后一个版本。
+ * 此版本号用于避免对值进行不必要的重新评估。
+ * 如果一个节点被重新评估并发现与以前的数据相同，它的版本（mtime）保持不变。如果一个节点的所有子节点都具有与以前相同的版本，则可以跳过其重新评估。
+ * <p>这不会实现 Skyframe 评估设置和后处理的其他部分，例如将一组请求的顶级节点转换为Action，或构建评估结果。派生类应该这样做。·
+ *
+ *
  * Defines the evaluation action used in the multi-threaded Skyframe evaluation, and constructs the
+ *
  * {@link ParallelEvaluatorContext} that the actions rely on.
  *
  * <p>Evaluates a set of given functions ({@code SkyFunction}s) with arguments ({@code SkyKey}s).
@@ -220,6 +238,13 @@ abstract class AbstractParallelEvaluator {
   }
 
   /**
+   *
+   * 评估值的操作。
+   * <p>{@link Comparable} 用于优先级队列。
+   * 在实验上，由父级将排队的评估分组在一起会导致更少的正在进行的评估，从而降低峰值内存使用量。
+   * 因此，我们存储 {@link #evaluationPriority}（来自 {@link #globalEnqueuedIndex}
+   * 并将其用于比较：应该更早地评估后来的排队，以进行深度优先搜索，除了重新排队的节点，它总是 获得最高优先级。
+   * <p>这在使用 {@link ForkJoinPool} 时不适用，因为它不允许轻松确定工作优先级。
    * An action that evaluates a value.
    *
    * <p>{@link Comparable} for use in priority queues. Experimentally, grouping enqueued evaluations
@@ -1222,6 +1247,9 @@ abstract class AbstractParallelEvaluator {
   }
 
   /**
+   *
+   * 如果该条目不需要在此构建中重新评估，则返回 true。
+   * 如果该条目未完成，则需要重新评估该条目，但如果上次构建未完全评估并且此构建处于持续状态，则该条目也需要重新评估。
    * Return true if the entry does not need to be re-evaluated this build. The entry will need to be
    * re-evaluated if it is not done, but also if it was not completely evaluated last build and this
    * build is keepGoing.

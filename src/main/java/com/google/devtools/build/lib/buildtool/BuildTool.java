@@ -127,8 +127,16 @@ public class BuildTool {
   }
 
   /**
-   * The crux of the build system: builds the targets specified in the request.
    *
+   * 构建系统的关键：构建请求中指定的目标。
+   * <p>为指定的目标集执行加载、分析和执行，遵守 BuildRequest 中的配置选项。 如果成功则正常返回，否则抛出异常。
+   * <p>调用者必须确保在此方法之后调用 {@link #stopRequest}，即使它抛出。
+   * <p>调用者负责设置和同步包缓存。
+   * <p>在这个函数的执行过程中，请求对象的actualTargets 和successfulTargets 字段被设置。
+   * The crux of the build system: builds the targets specified in the request.
+   * @param request 这个构建工具正在服务的构建请求，它指定了各种选项； 在这个方法的执行过程中，请求对象的actualTargets和successfulTargets字段被填充
+   * @param result 构建结果是这个构建的可变结果
+   * @param validator target validator
    * <p>Performs loading, analysis and execution for the specified set of targets, honoring the
    * configuration options in the BuildRequest. Returns normally iff successful, throws an exception
    * otherwise.

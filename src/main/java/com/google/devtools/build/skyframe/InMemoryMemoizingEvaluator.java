@@ -40,6 +40,9 @@ import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 /**
+ *
+ * 使用急切失效策略的内存中 {@link MemoizingEvaluator}。 这个类本身不是线程安全的。
+ * 将此类与任何返回的图并行使用也不是线程安全的。 但是，只要不与 {@link #evaluate} 调用并行发生，就可以从多个线程访问图形。
  * An in-memory {@link MemoizingEvaluator} that uses the eager invalidation strategy. This class is,
  * by itself, not thread-safe. Neither is it thread-safe to use this class in parallel with any of
  * the returned graphs. However, it is allowed to access the graph from multiple threads as long as
@@ -161,9 +164,14 @@ public final class InMemoryMemoizingEvaluator extends AbstractInMemoryMemoizingE
     evaluationContext = ensureExecutorService(evaluationContext);
     setAndCheckEvaluateState(true, roots);
     try {
+      // 标记以从先前的评估中删除任何运行中的节点。
       // Mark for removal any inflight nodes from the previous evaluation.
       valuesToDelete.addAll(progressReceiver.getAndClearInflightKeys());
 
+
+
+//      RecordingDifferencer 实现并没有像现在应该的那样工作。 它在调用 getDiff 后清除内部数据结构，并且不会返回历史版本的差异。
+//      这使得下面的代码对中断很敏感。 理想情况下，如果发生中断，我们根本不会更新 lastGraphVersion。
       // The RecordingDifferencer implementation is not quite working as it should be at this point.
       // It clears the internal data structures after getDiff is called and will not return
       // diffs for historical versions. This makes the following code sensitive to interrupts.

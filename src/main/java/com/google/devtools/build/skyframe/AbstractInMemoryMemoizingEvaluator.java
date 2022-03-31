@@ -24,7 +24,9 @@ import java.util.Set;
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
-/** Partial implementation of {@link MemoizingEvaluator} based on an {@link InMemoryGraph}. */
+/**
+ * 基于 {@link InMemoryGraph} 的 {@link MemoizingEvaluator} 的部分实现。
+ * Partial implementation of {@link MemoizingEvaluator} based on an {@link InMemoryGraph}. */
 public abstract class AbstractInMemoryMemoizingEvaluator implements MemoizingEvaluator {
 
   @ForOverride

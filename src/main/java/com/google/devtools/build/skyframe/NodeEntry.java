@@ -23,6 +23,11 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
+ *
+ * 图中的节点。 此类上的所有操作都是线程安全的。
+ * <p>此接口是公共的，仅用于包外的替代图形实现。
+ * <p>某些图实现的节点条目可能会在各种访问中抛出 {@link InterruptedException}。
+ * 这样的异常不应该在本地捕获——应该允许它们向上传播。
  * A node in the graph. All operations on this class are thread-safe.
  *
  * <p>This interface is public only for the benefit of alternative graph implementations outside of

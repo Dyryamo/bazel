@@ -24,6 +24,11 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
+ *
+ *
+ * 公开其条目和结构的图，供必须遍历它的类使用。
+ * <p>尝试检索节点条目时，某些图形实现可能会抛出 {@link InterruptedException}。 这样的异常不应该在本地捕获——应该允许它们向上传播。
+ *
  * A graph that exposes its entries and structure, for use by classes that must traverse it.
  *
  * <p>Certain graph implementations can throw {@link InterruptedException} when trying to retrieve
@@ -92,12 +97,15 @@ public interface QueryableGraph {
   }
 
   /**
+   * 在 Skyframe 图中查找节点的原因。
    * The reason that a node is being looked up in the Skyframe graph.
    *
    * <p>Alternate graph implementations may wish to make use of this information.
    */
   enum Reason {
     /**
+     * 获取节点是为了查看它是否需要评估或者因为它刚刚被评估，但*不是*因为它只是在评估 SkyFunction 期间被请求（参见 {@link #DEP_REQUESTED}）。
+     *  The node is being fetched in order to see if it needs to be evaluated or because it was just evaluated, but *not* because it was just requested during evaluation of a SkyFunction (see {@link #DEP_REQUESTED}).
      * The node is being fetched in order to see if it needs to be evaluated or because it was just
      * evaluated, but *not* because it was just requested during evaluation of a SkyFunction
      * (see {@link #DEP_REQUESTED}).

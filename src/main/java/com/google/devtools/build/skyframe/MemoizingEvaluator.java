@@ -24,6 +24,12 @@ import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 /**
+ * 由一组可以从value key构造值的Function定义的图。
+ * <p>值构造函数（{@link SkyFunction}s）可以声明依赖于先决条件{@link SkyValue}s。 {@link MemoizingEvaluator} 实现确保这些是事先创建的。
+ *
+ * <p>图表缓存先前计算的值。 在调用 {@link #evaluate} 之间可以使任意值无效； 下次请求时将重新创建它们。
+ *
+ *
  * A graph, defined by a set of functions that can construct values from value keys.
  *
  * <p>The value constructor functions ({@link SkyFunction}s) can declare dependencies on
